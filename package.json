@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "npm run prod",
-    "server": "node ./server/bin/www",
+    "server": "node ./server/server",
     "test": "jest",
     "test:watch": "nodemon --config ./.nodemon-test.json",
     "dev": "NODE_ENV=development npm run server",

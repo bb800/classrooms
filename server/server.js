@@ -3,7 +3,7 @@
 
 const http = require('http');
 const debug = require('debug')('classrooms:server');
-const app = require('../app');
+const app = require('./app');
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '3000');
