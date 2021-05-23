@@ -11,6 +11,10 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
+    'no-use-before-define': [
+      'error',
+      { functions: false, classes: true, variables: true },
+    ],
     // from xo.js
     // https://github.com/xojs/eslint-config-xo/blob/main/index.js
     'no-unused-vars': [
