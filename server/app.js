@@ -7,6 +7,7 @@ const { ApplicationError, errorHandler } = require('./handlers/errors');
 // Routes
 const teachersRouter = require('./routes/teachers');
 const studentsRouter = require('./routes/students');
+const registerRouter = require('./routes/register');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use((error, req, res, next) => {
 // Setup routes
 app.use('/api/teachers', teachersRouter);
 app.use('/api/students', studentsRouter);
+app.use('/api/register', registerRouter);
 
 // Catch all route
 // eslint-disable-next-line no-unused-vars
