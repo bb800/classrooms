@@ -8,6 +8,7 @@ const router = new express.Router();
 
 router.put('/', async (req, res) => {
   const students = req.body;
+
   if (
     students === undefined ||
     !Array.isArray(students) ||
@@ -19,29 +20,36 @@ router.put('/', async (req, res) => {
     );
   }
 
-  await classroomRepository.enrollStudents(handleStudentError, students);
+  await classroomRepository.enrollStudents(students);
+
   res.status(200).json(message(`${students.length} student(s) inserted`));
 });
 
 router.get('/', async (req, res) => {
-  const students = await classroomRepository.getStudents(handleStudentError);
+  const students = await classroomRepository.getStudents();
   res.json(data(students));
 });
 
-// error handlers on /student
-function handleStudentError(error) {
-  console.error('error on /students');
+// eslint-disable-next-line no-unused-vars
+router.use((err, req, res, next) => {
+  console.error('error on /api/students');
 
   let errorMessage;
-  const { errno } = error;
-  if (errno === 1062) {
+  let status = 400;
+  const { errno } = err;
+
+  if (err instanceof ApplicationError) {
+    errorMessage = err.message;
+    status = err.status;
+  } else if (errno === 1062) {
     errorMessage =
       '1 or more students already enrolled in the system! Please try again with students not in the system';
   } else {
+    status = 500;
     errorMessage = 'Unknown error occured';
   }
 
-  return new ApplicationError(400, errorMessage);
-}
+  throw new ApplicationError(status, errorMessage);
+});
 
 module.exports = router;

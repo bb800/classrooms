@@ -8,17 +8,4 @@ class ApplicationError extends Error {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-const errorHandler = (err, req, res, next) => {
-  const { status, message } = err;
-  console.error('error: ', message);
-
-  res.status(status).json({
-    error: {
-      code: status,
-      message,
-    },
-  });
-};
-
-module.exports = { ApplicationError, errorHandler };
+module.exports = { ApplicationError };

@@ -1,5 +1,7 @@
 const request = require('supertest');
 const app = require('../server/app');
+
+jest.mock('../server/db/repository');
 const { classroomRepository } = require('../server/db/repository');
 
 const consoleError = console.error;
@@ -13,14 +15,16 @@ afterAll(() => {
 });
 
 describe('Admin APIs - /api/students', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   test('GET: should respond with an array', async () => {
-    const mockFn = jest.fn();
-    mockFn.mockResolvedValue(['foo', 'bar', 'baz']);
-    classroomRepository.getStudents = mockFn;
+    classroomRepository.getStudents.mockResolvedValue(['foo', 'bar', 'baz']);
 
     const { body, statusCode } = await request(app).get('/api/students');
 
-    expect(mockFn.mock.calls.length).toBe(1);
+    expect(classroomRepository.getStudents.mock.calls.length).toBe(1);
     expect(statusCode).toBe(200);
     expect(body).toStrictEqual({
       data: ['foo', 'bar', 'baz'],
@@ -28,14 +32,11 @@ describe('Admin APIs - /api/students', () => {
   });
 
   test('PUT: should respond with message when insertion succeeds', async () => {
-    const mockFn = jest.fn();
-    classroomRepository.runQueryOnPool = mockFn;
-
     const { body, statusCode } = await request(app)
       .put('/api/students')
       .send(['foo', 'bar', 'baz']);
 
-    expect(mockFn.mock.calls.length).toBe(1);
+    expect(classroomRepository.enrollStudents.mock.calls.length).toBe(1);
     expect(statusCode).toBe(200);
     expect(body).toStrictEqual({
       message: '3 student(s) inserted',
@@ -47,6 +48,7 @@ describe('Admin APIs - /api/students', () => {
       .put('/api/students')
       .send([]);
 
+    expect(classroomRepository.enrollStudents.mock.calls.length).toBe(0);
     expect(statusCode).toBe(400);
     expect(body).toStrictEqual({
       error: {
@@ -58,25 +60,42 @@ describe('Admin APIs - /api/students', () => {
   });
 
   test('PUT: should respond with an error if record already exists in db', async () => {
-    const mockFn = jest.fn();
-    mockFn.mockImplementation(() => {
+    classroomRepository.enrollStudents.mockImplementation(() => {
       const error = new Error();
       error.errno = 1062;
       throw error;
     });
-    classroomRepository.runQueryOnPool = mockFn;
 
     const { body, statusCode } = await request(app)
       .put('/api/students')
       .send(['error']);
 
-    expect(mockFn.mock.calls.length).toBe(1);
+    expect(classroomRepository.enrollStudents.mock.calls.length).toBe(1);
     expect(statusCode).toBe(400);
     expect(body).toStrictEqual({
       error: {
         code: 400,
         message:
           '1 or more students already enrolled in the system! Please try again with students not in the system',
+      },
+    });
+  });
+
+  test('PUT: should respond with an error db responds with unknown error code', async () => {
+    classroomRepository.enrollStudents.mockImplementation(() => {
+      throw new Error();
+    });
+
+    const { body, statusCode } = await request(app)
+      .put('/api/students')
+      .send(['error']);
+
+    expect(classroomRepository.enrollStudents.mock.calls.length).toBe(1);
+    expect(statusCode).toBe(500);
+    expect(body).toStrictEqual({
+      error: {
+        code: 500,
+        message: 'Unknown error occured',
       },
     });
   });

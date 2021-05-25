@@ -3,15 +3,14 @@ const { getTestConnectionPool } = require('../server/db/configurations');
 const { sortResultsByKey } = require('../server/utils/compare');
 
 const testRepository = new Repository(getTestConnectionPool());
-const noop = () => {};
 const consoleError = console.error;
 
 beforeAll(async () => {
   console.error = jest.fn();
 
-  await testRepository.executeQuery('delete from registrations', noop);
-  await testRepository.executeQuery('delete from teachers', noop);
-  await testRepository.executeQuery('delete from students', noop);
+  await testRepository.executePoolQuery('delete from registrations');
+  await testRepository.executePoolQuery('delete from teachers');
+  await testRepository.executePoolQuery('delete from students');
 });
 
 afterAll(() => {
@@ -20,11 +19,10 @@ afterAll(() => {
 
 describe('Repository - Teachers table', () => {
   test('enrollTeachers() should insert teachers into the database', async () => {
-    await testRepository.enrollTeachers(noop, ['foo', 'bar', 'baz']);
+    await testRepository.enrollTeachers(['foo', 'bar', 'baz']);
 
-    const results = await testRepository.executeQuery(
-      'select * from teachers',
-      noop
+    const results = await testRepository.executePoolQuery(
+      'select * from teachers'
     );
 
     // filter out id and sort
@@ -41,7 +39,7 @@ describe('Repository - Teachers table', () => {
   });
 
   test('getTeachers() should retrieve teachers from the database', async () => {
-    const results = await testRepository.getTeachers(noop);
+    const results = await testRepository.getTeachers();
 
     // filter out id and sort
     const teacherData = results

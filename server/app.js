@@ -2,12 +2,13 @@ const express = require('express');
 // const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { ApplicationError, errorHandler } = require('./handlers/errors');
+const { ApplicationError } = require('./handlers/errors');
 
 // Routes
 const teachersRouter = require('./routes/teachers');
 const studentsRouter = require('./routes/students');
 const registerRouter = require('./routes/register');
+const commonStudentsRouter = require('./routes/commonStudents');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use((error, req, res, next) => {
 app.use('/api/teachers', teachersRouter);
 app.use('/api/students', studentsRouter);
 app.use('/api/register', registerRouter);
+app.use('/api/commonStudents', commonStudentsRouter);
 
 // Catch all route
 // eslint-disable-next-line no-unused-vars
@@ -35,6 +37,17 @@ app.use('*', (req, res) => {
   throw new ApplicationError(400, 'Unsupported api');
 });
 
-app.use(errorHandler);
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { status, message } = err;
+  console.error('error: ', message);
+
+  res.status(status).json({
+    error: {
+      code: status,
+      message,
+    },
+  });
+});
 
 module.exports = app;

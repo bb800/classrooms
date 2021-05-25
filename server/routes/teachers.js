@@ -8,6 +8,7 @@ const router = new express.Router();
 
 router.put('/', async (req, res) => {
   const teachers = req.body;
+
   if (
     teachers === undefined ||
     !Array.isArray(teachers) ||
@@ -19,29 +20,35 @@ router.put('/', async (req, res) => {
     );
   }
 
-  await classroomRepository.enrollTeachers(handleTeachersError, teachers);
+  await classroomRepository.enrollTeachers(teachers);
   res.status(200).json(message(`${teachers.length} teacher(s) inserted`));
 });
 
 router.get('/', async (_, res) => {
-  const teachers = await classroomRepository.getTeachers(handleTeachersError);
+  const teachers = await classroomRepository.getTeachers();
   res.json(data(teachers));
 });
 
-// error handlers on /teachers
-function handleTeachersError(error) {
-  console.error('error on /teachers');
+// eslint-disable-next-line no-unused-vars
+router.use((err, req, res, next) => {
+  console.error('error on /api/teachers');
 
   let errorMessage;
-  const { errno } = error;
-  if (errno === 1062) {
+  let status = 400;
+  const { errno } = err;
+
+  if (err instanceof ApplicationError) {
+    errorMessage = err.message;
+    status = err.status;
+  } else if (errno === 1062) {
     errorMessage =
       '1 or more teachers already enrolled in the system! Please try again with teachers not in the system';
   } else {
+    status = 500;
     errorMessage = 'Unknown error occured';
   }
 
-  return new ApplicationError(400, errorMessage);
-}
+  throw new ApplicationError(status, errorMessage);
+});
 
 module.exports = router;

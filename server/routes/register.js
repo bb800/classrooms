@@ -19,29 +19,33 @@ router.post('/', async (req, res) => {
     );
   }
 
-  await classroomRepository.registerStudents(handleDuplicateStudent, {
-    teacher,
-    students,
-  });
+  await classroomRepository.registerStudents(teacher, students);
   res.sendStatus(204);
 });
 
-function handleDuplicateStudent(error) {
-  console.error('error on /register');
+// eslint-disable-next-line no-unused-vars
+router.use((err, req, res, next) => {
+  console.error('error on /api/register');
 
-  let message;
-  const { errno } = error;
-  if (errno === 1062) {
-    message =
+  let errorMessage;
+  let status = 400;
+  const { errno } = err;
+
+  if (err instanceof ApplicationError) {
+    errorMessage = err.message;
+    status = err.status;
+  } else if (errno === 1062) {
+    errorMessage =
       '1 or more students already registered! Please try again with unregistered students.';
   } else if (errno === 1048) {
-    message =
+    errorMessage =
       '1 or more teacher(s)/student(s) not found. Please check your input and try again.';
   } else {
-    message = 'Unknown registration error occured';
+    status = 500;
+    errorMessage = 'Unknown error occured';
   }
 
-  return new ApplicationError(400, message);
-}
+  throw new ApplicationError(status, errorMessage);
+});
 
 module.exports = router;
