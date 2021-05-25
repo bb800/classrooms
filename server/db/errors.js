@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 class ApplicationError extends Error {
   constructor(status, message, ...params) {
     super(...params);
@@ -8,4 +9,14 @@ class ApplicationError extends Error {
   }
 }
 
-module.exports = { ApplicationError };
+class DataError extends Error {
+  constructor(status, message, ...params) {
+    super(...params);
+
+    this.status = status;
+    this.message = message;
+    this.date = new Date();
+  }
+}
+
+module.exports = { ApplicationError, DataError };

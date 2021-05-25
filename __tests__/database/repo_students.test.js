@@ -57,7 +57,7 @@ describe('Repository - Students table', () => {
     ]);
   });
 
-  test('suspendStudent(...) should retrieve students from the database', async () => {
+  test('suspendStudent(...) should a student in the database', async () => {
     await testRepository.suspendStudent('foo');
 
     const results = await testRepository.getStudents();
@@ -71,6 +71,21 @@ describe('Repository - Students table', () => {
     expect(studentData).toStrictEqual([
       { email: 'bar', suspended: 0 },
       { email: 'baz', suspended: 0 },
+      { email: 'foo', suspended: 1 },
+    ]);
+  });
+
+  test('getMentionedStudents(...) should retrieve students and suspension status from the database', async () => {
+    const results = await testRepository.getStudentRecords(['foo', 'bar']);
+
+    // filter out id and sort
+    const studentData = results
+      .map((student) => filterObject(student, ['email', 'suspended']))
+      .sort(sortResultsByKey('email'));
+
+    expect(results.length).toEqual(2);
+    expect(studentData).toStrictEqual([
+      { email: 'bar', suspended: 0 },
       { email: 'foo', suspended: 1 },
     ]);
   });

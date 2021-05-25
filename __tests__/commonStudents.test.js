@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../server/app');
+const { DataError } = require('../server/db/errors');
 
 jest.mock('../server/db/repository');
 const { classroomRepository } = require('../server/db/repository');
@@ -60,7 +61,7 @@ describe('/api/register', () => {
 
   test('GET: should respond with 400 when 1 or more teachers have no registered students', async () => {
     classroomRepository.getCommonStudents.mockImplementation(() => {
-      throw new Error('mock error');
+      throw new DataError(400, 'mock error');
     });
 
     const { body, statusCode } = await request(app)

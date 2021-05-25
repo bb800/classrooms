@@ -10,6 +10,7 @@ const studentsRouter = require('./routes/students');
 const registerRouter = require('./routes/register');
 const commonStudentsRouter = require('./routes/commonStudents');
 const suspendRouter = require('./routes/suspend');
+const retrieveForNotificationsRouter = require('./routes/retrieveForNotifications');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/students', studentsRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/commonStudents', commonStudentsRouter);
 app.use('/api/suspend', suspendRouter);
+app.use('/api/retrievefornotifications', retrieveForNotificationsRouter);
 
 // Catch all route
 // eslint-disable-next-line no-unused-vars

@@ -1,5 +1,5 @@
 const express = require('express');
-const { ApplicationError } = require('../db/errors');
+const { ApplicationError, DataError } = require('../db/errors');
 const { classroomRepository } = require('../db/repository');
 require('express-async-errors');
 
@@ -37,12 +37,17 @@ router.use((err, req, res, next) => {
   let status;
   const { errno } = err;
 
-  if (errno) {
+  if (err instanceof ApplicationError || err instanceof DataError) {
+    status = err.status;
+    errorMessage = err.message;
+  } else if (errno) {
     status = 500;
     errorMessage = 'Unknown error occured';
+    console.error('Database error: ', errno);
   } else {
-    status = 400;
-    errorMessage = err.message;
+    status = 500;
+    errorMessage = 'Unknown error occured';
+    console.error(errorMessage);
   }
 
   throw new ApplicationError(status, errorMessage);

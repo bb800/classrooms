@@ -242,4 +242,44 @@ describe('Repository - Registrations table', () => {
       expect(actualSorted).toStrictEqual(expected);
     });
   });
+
+  describe('retrieveForNotifications(...)', () => {
+    test('should return an array of students that should be notified', async () => {
+      const results = await testRepository.retrieveForNotifications(
+        'mr.mackey@teachers.com',
+        ['bebe@students.com', 'eric@students.com', 'kenny@students.com']
+      );
+
+      const actualSorted = results.sort();
+
+      const expected = [
+        'bebe@students.com',
+        'eric@students.com',
+        'kenny@students.com',
+        'kyle@students.com',
+        'wendy@students.com',
+      ];
+
+      expect(results.length).toEqual(5);
+      expect(actualSorted).toStrictEqual(expected);
+    });
+
+    test('should return an array of students that should be notified without empty mentioned students array', async () => {
+      const results = await testRepository.retrieveForNotifications(
+        'mr.mackey@teachers.com',
+        []
+      );
+
+      const actualSorted = results.sort();
+
+      const expected = [
+        'eric@students.com',
+        'kyle@students.com',
+        'wendy@students.com',
+      ];
+
+      expect(results.length).toEqual(3);
+      expect(actualSorted).toStrictEqual(expected);
+    });
+  });
 });

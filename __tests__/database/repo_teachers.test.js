@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe('Repository - Teachers table', () => {
-  test('enrollTeachers() should insert teachers into the database', async () => {
+  test('enrollTeachers(...) should insert teachers into the database', async () => {
     await testRepository.enrollTeachers(['foo', 'bar', 'baz']);
 
     const results = await testRepository.executePoolQuery(
