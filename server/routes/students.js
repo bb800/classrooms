@@ -1,8 +1,8 @@
 const express = require('express');
 require('express-async-errors');
 const { classroomRepository } = require('../db/repository');
-const { ApplicationError } = require('../handlers/errors');
-const { data, message } = require('../handlers/data');
+const { ApplicationError } = require('../db/errors');
+const { data, message } = require('../utils/data');
 
 const router = new express.Router();
 

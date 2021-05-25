@@ -1,6 +1,6 @@
-const { Repository } = require('../server/db/repository');
-const { getTestConnectionPool } = require('../server/db/configurations');
-const { sortResultsByKey } = require('../server/utils/compare');
+const { Repository } = require('../../server/db/repository');
+const { getTestConnectionPool } = require('../../server/db/configurations');
+const { sortResultsByKey } = require('../../server/utils/compare');
 
 const testRepository = new Repository(getTestConnectionPool());
 const consoleError = console.error;

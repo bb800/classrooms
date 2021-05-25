@@ -1,5 +1,5 @@
 const express = require('express');
-const { ApplicationError } = require('../handlers/errors');
+const { ApplicationError } = require('../db/errors');
 const { classroomRepository } = require('../db/repository');
 require('express-async-errors');
 
@@ -7,9 +7,6 @@ const router = new express.Router();
 
 router.get('/', async (req, res) => {
   const { teacher } = req.query;
-
-  console.log('teacher:', teacher);
-  console.log('query:', req.url);
 
   if (!teacher) {
     throw new ApplicationError(

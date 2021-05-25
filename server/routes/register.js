@@ -1,5 +1,5 @@
 const express = require('express');
-const { ApplicationError } = require('../handlers/errors');
+const { ApplicationError } = require('../db/errors');
 const { classroomRepository } = require('../db/repository');
 require('express-async-errors');
 
