@@ -81,7 +81,7 @@ describe('Admin APIs - /api/teachers', () => {
     });
   });
 
-  test('PUT: should respond with an error db responds with unknown error code', async () => {
+  test('PUT: should respond with an 500 error if database responds with unknown error code', async () => {
     classroomRepository.enrollTeachers.mockImplementation(() => {
       throw new Error();
     });

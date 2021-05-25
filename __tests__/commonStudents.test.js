@@ -77,7 +77,7 @@ describe('/api/register', () => {
     });
   });
 
-  test('GET: should respond with 500 when database returns an unknown error', async () => {
+  test('GET: should respond with a 500 error when database returns an unknown error', async () => {
     classroomRepository.getCommonStudents.mockImplementation(() => {
       const error = new Error();
       error.errno = 999;

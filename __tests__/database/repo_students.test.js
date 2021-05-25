@@ -21,7 +21,7 @@ afterAll(() => {
 });
 
 describe('Repository - Students table', () => {
-  test('enrollStudents() should insert students into the database', async () => {
+  test('enrollStudents(...) should insert students into the database', async () => {
     await testRepository.enrollStudents(['foo', 'bar', 'baz']);
 
     const results = await testRepository.executePoolQuery(
@@ -54,6 +54,24 @@ describe('Repository - Students table', () => {
       { email: 'bar', suspended: 0 },
       { email: 'baz', suspended: 0 },
       { email: 'foo', suspended: 0 },
+    ]);
+  });
+
+  test('suspendStudent(...) should retrieve students from the database', async () => {
+    await testRepository.suspendStudent('foo');
+
+    const results = await testRepository.getStudents();
+
+    // filter out id and sort
+    const studentData = results
+      .map((student) => filterObject(student, ['email', 'suspended']))
+      .sort(sortResultsByKey('email'));
+
+    expect(results.length).toEqual(3);
+    expect(studentData).toStrictEqual([
+      { email: 'bar', suspended: 0 },
+      { email: 'baz', suspended: 0 },
+      { email: 'foo', suspended: 1 },
     ]);
   });
 });

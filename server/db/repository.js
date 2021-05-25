@@ -99,6 +99,12 @@ class Repository {
 
     return commonStudents;
   }
+
+  suspendStudent(student) {
+    const query = `update students set suspended = true where email = '${student}';`;
+
+    return this.executePoolQuery(query);
+  }
 }
 
 const classroomRepository = new Repository(getConnectionPool());

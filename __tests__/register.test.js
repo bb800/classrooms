@@ -98,4 +98,28 @@ describe('/api/register', () => {
       },
     });
   });
+
+  test('POST: should respond with a 500 error when database returns an unknown error', async () => {
+    classroomRepository.registerStudents.mockImplementation(() => {
+      const error = new Error();
+      error.errno = 999;
+      throw error;
+    });
+
+    const { body, statusCode } = await request(app)
+      .post('/api/register')
+      .send({
+        teacher: 'test',
+        students: ['foo', 'bar', 'baz'],
+      });
+
+    expect(classroomRepository.registerStudents.mock.calls.length).toBe(1);
+    expect(statusCode).toBe(500);
+    expect(body).toStrictEqual({
+      error: {
+        code: 500,
+        message: 'Unknown error occured',
+      },
+    });
+  });
 });
