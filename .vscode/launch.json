@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Debug Test",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Debug Program",
+            "program": "${workspaceFolder}/server/server.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        }
+    ]
+}

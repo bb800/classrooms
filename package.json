@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "jest": {
+    "verbose": true,
     "testEnvironment": "node"
   },
   "scripts": {
     "start": "npm run prod",
     "server": "node ./server/server",
-    "test": "jest",
+    "test": "NODE_ENV=test jest --runInBand --forceExit",
+    "test:i": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:watch": "nodemon --config ./.nodemon-test.json",
     "dev": "NODE_ENV=development npm run server",
     "dev:watch": "nodemon --config ./.nodemon-dev.json",
@@ -19,6 +21,8 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-async-errors": "^3.1.1",
+    "jest": "^26.6.3",
+    "leaked-handles": "^5.2.0",
     "mariadb": "^2.5.3",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.7",
@@ -29,6 +33,6 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.3",
-    "jest": "^26.6.3"
+    "supertest": "^6.1.3"
   }
 }
